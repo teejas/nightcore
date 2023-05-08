@@ -11,4 +11,4 @@ This is just an attempt to make a super simple and fast program to do the same t
 
 ## Current State
 
-Using the `dsp` Rust crate to perform resampling. Currently takes ~18s to resample a 30s track (not great).
+Using the `dasp` Rust crate to perform resampling. Currently takes ~18s to resample a 30s track (not great).
