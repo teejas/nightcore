@@ -12,3 +12,4 @@ hound = "3.5.0"
 rodio = {version = "0.17.1", features = ["symphonia-all"] }
 rubato = "0.12.0"
 rustfft = "6.1.0"
+symphonia = { version = "0.5.2", features = ["wav", "mp3"] }
