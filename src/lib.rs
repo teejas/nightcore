@@ -30,12 +30,19 @@ use symphonia::core::{
 #[command(author, version, about, long_about = None)]
 struct Args {
     #[arg(short, long, default_value = "./examples/short_melody.wav")]
-    file: String,
+    input_file: String,
+
+    #[arg(short, long, default_value = "output.wav")]
+    output_file: String
 }
 
 impl Args {
-    pub fn get_input_filepath(&self) -> PathBuf {
-        PathBuf::from(&self.file)
+    fn get_input_fp(&self) -> PathBuf {
+        PathBuf::from(&self.input_file)
+    }
+
+    fn get_output_fp(&self) -> PathBuf {
+        PathBuf::from(&self.output_file)
     }
 }
 
@@ -58,14 +65,7 @@ impl Track {
     }
 
     pub fn resample(&self, f_ratio: f32) { // f_ratio is the ratio to change the sample rate by
-        // let reader = WavReader::open(&self.orig_fp).unwrap();
         dbg!(f_ratio);
-    
-        // // Read the interleaved samples and convert them to a signal.
-        // let samples = reader
-        //     .into_samples()
-        //     .filter_map(Result::ok)
-        //     .map(i16::to_sample::<f64>);
         let signal = signal::from_interleaved_samples_iter(self.samples.clone());
     
         // Convert the signal's sample rate using `Sinc` interpolation.
@@ -98,8 +98,8 @@ impl Track {
 impl Default for Track {
     fn default() -> Self {
         let args = Args::parse();
-        dbg!(args.get_input_filepath());
-        let spec = match WavReader::open(args.get_input_filepath()).ok() {
+        dbg!(args.get_input_fp());
+        let spec = match WavReader::open(args.get_input_fp()).ok() {
             Some(reader) => reader.spec(),
             None => {
                 WavSpec {
@@ -112,8 +112,8 @@ impl Default for Track {
         };
         dbg!(spec);
         Track::from( 
-            args.get_input_filepath(),
-            PathBuf::from("output.wav"),
+            args.get_input_fp(),
+            args.get_output_fp(),
             spec
         )
     }
@@ -279,4 +279,6 @@ mod tests {
         let str_eq = String::from("Finished playing track.");
         assert_eq!(str_eq, playback(&input_file, 0).unwrap())
     }
+
+    // to-do: add tests for resampling mp3 and wav
 }
